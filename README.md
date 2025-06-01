@@ -43,7 +43,7 @@ OpenAIAPIに質問し、markdownやhtmlで回答を保存できるCLIアプリ�
 
 ```plaintext
 ~/.gptcl/
-├── gptcl_config.json
+├── config.json
 ├── chat_history.db  
 ```
 

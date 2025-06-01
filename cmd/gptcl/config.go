@@ -1,9 +1,11 @@
 package gptcl
 
 import (
-    "fmt"
-    "github.com/spf13/cobra"
-    "gpt-client/internal/application"
+	"fmt"
+	"gpt-client/internal/application"
+	"gpt-client/internal/application/service"
+
+	"github.com/spf13/cobra"
 )
 
 var apiKey string
@@ -35,7 +37,10 @@ var configCmd = &cobra.Command{
     },
 }
 
-func init() {
-    configCmd.Flags().StringVar(&apiKey, "api-key", "", "Set the API key")
-    configCmd.Flags().StringVar(&outputDir, "output-dir", "", "Set the output directory")
+// 依存関係をコマンドに渡すための関数
+// TODO: port/inのインターフェースに変えることを考える
+func RegisterConfigCommands(configService service.ConfigUseCase) {
+	// configCmdに必要なサービスを渡す
+	configCmd.Flags().StringVar(&apiKey, "api-key", "", "Set the API key")
+	configCmd.Flags().StringVar(&outputDir, "output-dir", "", "Set the output directory")
 }
