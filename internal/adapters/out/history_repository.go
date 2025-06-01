@@ -16,18 +16,18 @@ type QueryHistoryDB struct {
 	CreatedAt string `json:"created_at"`
 }
 
-// HistoryRepository GORMを使った履歴の操作を行う構造体
-type HistoryRepository struct {
+// HistoryRepositoryImpl GORMを使った履歴の操作を行う構造体
+type HistoryRepositoryImpl struct {
 	DB *gorm.DB
 }
 
-// NewHistoryRepository 新しい履歴リポジトリを作成
-func NewHistoryRepository(db *gorm.DB) *HistoryRepository {
-	return &HistoryRepository{DB: db}
+// NewHistoryRepositoryImpl 新しい履歴リポジトリを作成
+func NewHistoryRepositoryImpl(db *gorm.DB) *HistoryRepositoryImpl {
+	return &HistoryRepositoryImpl{DB: db}
 }
 
 // ListHistory DBの全てのクエリ履歴を返却
-func (r *HistoryRepository) ListHistory() ([]out.QueryHistory, error) {
+func (r *HistoryRepositoryImpl) ListHistory() ([]out.QueryHistory, error) {
 	var histories []QueryHistoryDB
 	if err := r.DB.Find(&histories).Error; err != nil {
 		return nil, fmt.Errorf("error retrieving history: %v", err)
@@ -43,7 +43,7 @@ func (r *HistoryRepository) ListHistory() ([]out.QueryHistory, error) {
 }
 
 // ListHistoryWithPagination ページネーションで履歴を返却
-func (r *HistoryRepository) ListHistoryWithPagination(fromId int, toId int) ([]out.QueryHistory, error) {
+func (r *HistoryRepositoryImpl) ListHistoryWithPagination(fromId int, toId int) ([]out.QueryHistory, error) {
 	var histories []QueryHistoryDB
 	if err := r.DB.Where("id BETWEEN ? AND ?", fromId, toId).Find(&histories).Error; err != nil {
 		return nil, fmt.Errorf("error retrieving paginated history: %v", err)
@@ -65,8 +65,8 @@ func mapQueryHistoryToResponse(histories []QueryHistoryDB) ([]out.QueryHistory, 
 	for _, history := range histories {
 		// DBから取得したQueryHistoryDB構造体をQueryHistory構造体に変換
 		result = append(result, out.QueryHistory{
-			ID:       history.ID,
-			Query:    history.Query,
+			ID:    history.ID,
+			Query: history.Query,
 		})
 	}
 

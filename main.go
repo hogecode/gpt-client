@@ -3,6 +3,7 @@ package main
 import (
 	"gpt-client/cmd/gptcl"
 	"gpt-client/internal/adapters/out"
+	"gpt-client/internal/application/service"
 	"log"
 )
 
@@ -14,15 +15,18 @@ func main() {
 	}
 	defer db.Close()
 
+	var mockKey string
+
 	// 依存関係の設定
 	// adapters/outフォルダの初期化
-	historyRepository := out.NewHistoryRepository(db)
+	historyRepository := out.NewHistoryRepositoryImpl(db)
+	apiClient := out.NewOpenAIApiGatewayImpl(mockKey)
 
-	// サービスの初期化
+	// application/serviceフォルダの初期化
 	// サービスに上記の依存関係を注入
-	// historyService := service.NewHistoryService(historyRepository)
+	apiService := service.NewApiUseCase(apiClient)
 
-	// コマンドにサービスを注入
+	// cmd/gptclフォルダにサービスを注入
 	// gptcl.RegisterConfigCommands(historyService)
 
 	// CLIの実行

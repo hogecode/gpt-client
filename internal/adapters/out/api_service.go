@@ -5,28 +5,29 @@ import (
 	"fmt"
 	"gpt-client/internal/application/port/out"
 	"io/ioutil"
+
 	"github.com/go-resty/resty/v2"
 )
 
-const(
+const (
 	baseURL = "https://api.openai.com/v1"
 )
 
-// OpenAIApiClient 構造体の定義
-type OpenAIApiClient struct {
+// OpenAIApiGatewayImpl 構造体の定義
+type OpenAIApiGatewayImpl struct {
 	client  *resty.Client
 	apiKey  string
 	baseURL string
 }
 
-// NewOpenAIApiClient コンストラクタ関数
-func NewOpenAIApiClient(apiKey string) *OpenAIApiClient {
+// NewOpenAIApiGatewayImpl コンストラクタ関数
+func NewOpenAIApiGatewayImpl(apiKey string) *OpenAIApiGatewayImpl {
 	client := resty.New()
 
 	// APIキーを設定
 	client.SetHeader("Authorization", "Bearer "+apiKey)
 
-	return &OpenAIApiClient{
+	return &OpenAIApiGatewayImpl{
 		client:  client,
 		apiKey:  apiKey,
 		baseURL: baseURL,
@@ -34,7 +35,7 @@ func NewOpenAIApiClient(apiKey string) *OpenAIApiClient {
 }
 
 // SendQuery 単一のクエリを送信するメソッド
-func (c *OpenAIApiClient) SendQuery(ctx context.Context, query string) (out.OpenAIApiResponse, error) {
+func (c *OpenAIApiGatewayImpl) SendQuery(ctx context.Context, query string) (out.OpenAIApiResponse, error) {
 	// リクエストの作成
 	resp, err := c.client.R().
 		SetContext(ctx).
@@ -52,7 +53,7 @@ func (c *OpenAIApiClient) SendQuery(ctx context.Context, query string) (out.Open
 }
 
 // SendQueriesFromFile ファイルから複数のクエリを読み込み、送信するメソッド
-func (c *OpenAIApiClient) SendQueriesFromFile(ctx context.Context, filePath string) ([]out.OpenAIApiResponse, error) {
+func (c *OpenAIApiGatewayImpl) SendQueriesFromFile(ctx context.Context, filePath string) ([]out.OpenAIApiResponse, error) {
 	// ファイルの読み込み
 	fileData, err := ioutil.ReadFile(filePath)
 	if err != nil {
@@ -74,7 +75,7 @@ func (c *OpenAIApiClient) SendQueriesFromFile(ctx context.Context, filePath stri
 }
 
 // PingWithApiKey APIキーが有効か確認するメソッド
-func (c *OpenAIApiClient) PingWithApiKey() (bool, error) {
+func (c *OpenAIApiGatewayImpl) PingWithApiKey() (bool, error) {
 	// ヘルスチェックとして、適切なエンドポイントにリクエストを送信
 	resp, err := c.client.R().
 		SetHeader("Authorization", "Bearer "+c.apiKey).
@@ -88,7 +89,6 @@ func (c *OpenAIApiClient) PingWithApiKey() (bool, error) {
 	if resp.StatusCode() == 200 {
 		return true, nil
 	}
-
 
 	return false, fmt.Errorf("API key is invalid or the server is unreachable")
 }

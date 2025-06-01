@@ -15,7 +15,7 @@ type ConfigServiceImpl struct {
 }
 
 // 新しい ConfigServiceImpl を作成する関数
-func NewConfigService() *ConfigServiceImpl {
+func NewConfigServiceImpl() *ConfigServiceImpl {
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		fmt.Println("Error getting home directory:", err)
